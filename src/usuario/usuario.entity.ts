@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { CidadeEntity } from 'src/cidade/cidade.entity';
+import { EventoEntity } from 'src/evento/evento.entity';
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'usuario' })
 export class UsuarioEntity {
@@ -19,4 +21,10 @@ export class UsuarioEntity {
 
   @Column({ length: 30 })
   senha: string;
+
+  @ManyToOne(() => CidadeEntity, cidade => cidade.usuarios)
+  cidade: CidadeEntity;
+
+  @ManyToMany(() => EventoEntity, evento => evento.usuarios)
+  eventos: EventoEntity[];
 }

@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { CidadeEntity } from 'src/cidade/cidade.entity';
+import { UsuarioEntity } from 'src/usuario/usuario.entity';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'evento' })
 export class EventoEntity {
@@ -50,4 +52,14 @@ export class EventoEntity {
   @Column({})
   status: string;
 
+  @ManyToOne(() => CidadeEntity, cidade => cidade.eventos)
+  cidade: CidadeEntity;
+
+  @ManyToMany(() => UsuarioEntity, usuario => usuario.eventos)
+  @JoinTable({
+    name: 'evento_usuarios',
+    joinColumn: { name: 'evento_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'usuario_id', referencedColumnName: 'id' }
+  })
+  usuarios: UsuarioEntity[];
 }
