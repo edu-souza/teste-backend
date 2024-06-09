@@ -10,7 +10,7 @@ export class CidadeEntity {
   @Column({})
   nome: string;
 
-  @Column({ type: 'char'})
+  @Column({ type: 'char', length: 2 })
   estado: string;
 
   @OneToMany(() => UsuarioEntity, usuario => usuario.cidade)

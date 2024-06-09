@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { UsuarioEntity } from './usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,7 +9,7 @@ export class UsuarioService {
   constructor(
     @InjectRepository(UsuarioEntity)
     private usuarioRepository: Repository<UsuarioEntity>,
-  ) {}
+  ) { }
 
   findAll() {
     return this.usuarioRepository.find();
@@ -31,11 +31,41 @@ export class UsuarioService {
 
   async create(dto: UsuarioDto) {
     const newUsuario = this.usuarioRepository.create(dto);
+    this.validaUsuario(dto)
     return this.usuarioRepository.save(newUsuario);
   }
 
-  async update({ id, ...dto }: UsuarioDto) {
-    await this.findById(id);
-    return this.usuarioRepository.save({ id, ...dto });
+  async update(dto: UsuarioDto) {
+    await this.findById(dto.id);
+    this.validaUsuario(dto)
+    return this.usuarioRepository.save(dto);
+  }
+
+  private validaUsuario(usuario: UsuarioEntity | UsuarioDto) {
+    this.validaDataNasc(usuario);
+    this.validaEmail(usuario);
+    this.validaSenha(usuario);
+  }
+
+  private validaDataNasc(usuario: UsuarioEntity | UsuarioDto) {
+    const dataAtual = new Date();
+    const dataNascimento = new Date(usuario.dataNascimento);
+    if (dataAtual.getUTCFullYear() - dataNascimento.getUTCFullYear() < 16) {
+      throw new BadRequestException('O usuário deve ter no mínimo 16 anos');
+    };
+  }
+
+  private async validaEmail(dto: UsuarioEntity | UsuarioDto) {
+    const usuarioExist = await this.usuarioRepository.findOne({ where: { email: dto.email } });
+    if (usuarioExist && usuarioExist.id !== dto.id) {
+      throw new BadRequestException('Email já está em uso');
+    }
+  }
+
+  private validaSenha(dto: UsuarioEntity | UsuarioDto) {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!dto.senha.match(regex)) {
+      throw new BadRequestException('A senha deve conter pelo menos 8 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.');
+    }
   }
 }
