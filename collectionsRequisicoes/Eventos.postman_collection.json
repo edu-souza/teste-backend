@@ -1,0 +1,368 @@
+{
+	"info": {
+		"_postman_id": "fd2626f6-a190-487f-9d93-9460479970a0",
+		"name": "Eventos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36184729"
+	},
+	"item": [
+		{
+			"name": "Get",
+			"item": [
+				{
+					"name": "findAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/eventos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/eventos/e86ab35b-38f7-441f-8919-07c3f640ec3d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos",
+								"e86ab35b-38f7-441f-8919-07c3f640ec3d"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Post",
+			"item": [
+				{
+					"name": "post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"titulo\":\"Bate e volta na Cirenaica\",\r\n    \"descricao\": \"Pedal até na cachoeira, lanche no local\",\r\n    \"tipo\": \"não recorrente\",\r\n    \"data\": \"2024-06-15 10:00:00\",\r\n    \"senha\": \"cirena123\",\r\n    \"hora\": \"06:00:00\",\r\n    \"diaSemana\": \"\",\r\n    \"quantidadeParticipantes\": 6,\r\n    \"bairro\": \"Centro\",\r\n    \"rua\":  \"Henrique Lage\",\r\n    \"numero\": \"002\",\r\n    \"complemento\": \"Em frente ao Santo Alho\",\r\n    \"latitude\": \"-28.6838\",\r\n    \"longitude\": \"-49.3696\",\r\n    \"status\": \"A\",\r\n    \"cidade\": \"ae0a90df-3b84-4c72-90fa-e60f1ec69932\"\r\n    }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/eventos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Put",
+			"item": [
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\r\n    \"titulo\": \"Futebol Profissional\",\r\n    \"descricao\": \"Partida de futebol amador no campo do bairro.\",\r\n    \"tipo\": \"recorrente\",\r\n    \"data\": \"2024-06-15T13:00:00.000Z\",\r\n    \"senha\": \"senha123\",\r\n    \"hora\": \"10:00:00\",\r\n    \"diaSemana\": \"Sábado\",\r\n    \"quantidadeParticipantes\": 0,\r\n    \"bairro\": \"Centro\",\r\n    \"rua\": \"Rua Coronel Pedro Benedet\",\r\n    \"numero\": \"123\",\r\n    \"complemento\": \"\",\r\n    \"latitude\": \"-28.6838\",\r\n    \"longitude\": \"-49.3696\",\r\n    \"status\": \"A\"\r\n  }\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/eventos/e86ab35b-38f7-441f-8919-07c3f640ec3d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos",
+								"e86ab35b-38f7-441f-8919-07c3f640ec3d"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete",
+			"item": [
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/eventos/409ac200-9c51-4a78-8449-b92a7827ad8b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos",
+								"409ac200-9c51-4a78-8449-b92a7827ad8b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Validacoes",
+			"item": [
+				{
+					"name": "validaPrenchimentoCampos",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"titulo\": \"\",\r\n    \"descricao\": \"\",\r\n    \"tipo\": \"\",\r\n    \"data\": \"2024-06-15T13:00:00.000Z\",\r\n    \"senha\": \"senha123\",\r\n    \"hora\": \"10:00:00\",\r\n    \"diaSemana\": \"Sábado\",\r\n    \"quantidadeParticipantes\": 20,\r\n    \"bairro\": \"Centro\",\r\n    \"rua\": \"Rua Coronel Pedro Benedet\",\r\n    \"numero\": \"123\",\r\n    \"complemento\": \"\",\r\n    \"latitude\": \"-28.6838\",\r\n    \"longitude\": \"-49.3696\",\r\n    \"status\": \"A\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/eventos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validaSeExisteParticipante",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"titulo\": \"Futebol Amador\",\r\n    \"descricao\": \"Partida de futebol amador no campo do bairro.\",\r\n    \"tipo\": \"recorrente\",\r\n    \"data\": \"2024-06-15T13:00:00.000Z\",\r\n    \"senha\": \"senha123\",\r\n    \"hora\": \"10:00:00\",\r\n    \"diaSemana\": \"Sábado\",\r\n    \"quantidadeParticipantes\": 0,\r\n    \"bairro\": \"Centro\",\r\n    \"rua\": \"Rua Coronel Pedro Benedet\",\r\n    \"numero\": \"123\",\r\n    \"complemento\": \"\",\r\n    \"latitude\": \"-28.6838\",\r\n    \"longitude\": \"-49.3696\",\r\n    \"status\": \"A\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/eventos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validaDataEvento",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"titulo\": \"Futebol Amador\",\r\n    \"descricao\": \"Partida de futebol amador no campo do bairro.\",\r\n    \"tipo\": \"não recorrente\",\r\n    \"data\": \"2024-06-08T13:00:00.000Z\",\r\n    \"senha\": \"senha123\",\r\n    \"hora\": \"10:00:00\",\r\n    \"diaSemana\": \"Sábado\",\r\n    \"quantidadeParticipantes\": 20,\r\n    \"bairro\": \"Centro\",\r\n    \"rua\": \"Rua Coronel Pedro Benedet\",\r\n    \"numero\": \"123\",\r\n    \"complemento\": \"\",\r\n    \"latitude\": \"-28.6838\",\r\n    \"longitude\": \"-49.3696\",\r\n    \"status\": \"A\"\r\n    }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/eventos/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validaStatusEvento",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"titulo\": \"Futebol Amador SUB-14\",\r\n    \"descricao\": \"Partida de futebol amador no campo do bairro.\",\r\n    \"tipo\": \"recorrente\",\r\n    \"data\": \"2024-06-15T13:00:00.000Z\",\r\n    \"senha\": \"senha123\",\r\n    \"hora\": \"10:00:00\",\r\n    \"diaSemana\": \"Sábado\",\r\n    \"quantidadeParticipantes\": 20,\r\n    \"bairro\": \"Centro\",\r\n    \"rua\": \"Rua Coronel Pedro Benedet\",\r\n    \"numero\": \"123\",\r\n    \"complemento\": \"\",\r\n    \"latitude\": \"-28.6838\",\r\n    \"longitude\": \"-49.3696\",\r\n    \"status\": \"I\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/eventos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validaTipoEvento",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"titulo\": \"Futebol Amador\",\r\n    \"descricao\": \"Partida de futebol amador no campo do bairro.\",\r\n    \"tipo\": \"recorrente\",\r\n    \"data\": \"2024-06-08T13:00:00.000Z\",\r\n    \"senha\": \"senha123\",\r\n    \"hora\": \"10:00:00\",\r\n    \"diaSemana\": \"\",\r\n    \"quantidadeParticipantes\": 20,\r\n    \"bairro\": \"Centro\",\r\n    \"rua\": \"Rua Coronel Pedro Benedet\",\r\n    \"numero\": \"123\",\r\n    \"complemento\": \"\",\r\n    \"latitude\": \"-28.6838\",\r\n    \"longitude\": \"-49.3696\",\r\n    \"status\": \"A\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/eventos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validaDescricao",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"titulo\": \"Futebol Amador\",\r\n    \"descricao\": \"Partida\",\r\n    \"tipo\": \"recorrente\",\r\n    \"data\": \"2024-06-15T13:00:00.000Z\",\r\n    \"senha\": \"senha123\",\r\n    \"hora\": \"10:00:00\",\r\n    \"diaSemana\": \"Sábado\",\r\n    \"quantidadeParticipantes\": 2,\r\n    \"bairro\": \"Centro\",\r\n    \"rua\": \"Rua Coronel Pedro Benedet\",\r\n    \"numero\": \"123\",\r\n    \"complemento\": \"\",\r\n    \"latitude\": \"-28.6838\",\r\n    \"longitude\": \"-49.3696\",\r\n    \"status\": \"A\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/eventos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Diferencial",
+			"item": [
+				{
+					"name": "findWithPagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/eventos/pagination/?page=1&limit=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"eventos",
+								"pagination",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

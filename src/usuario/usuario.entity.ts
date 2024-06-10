@@ -10,9 +10,6 @@ export class UsuarioEntity {
   @Column({ length: 100 })
   nome: string;
 
-  @Column({ type: 'text', name: 'icone', nullable: true })
-  icone: String;
-
   @Column({ length: 100 })
   email: string;
 

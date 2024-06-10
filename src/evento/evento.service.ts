@@ -1,26 +1,42 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 import { EventoEntity } from './evento.entity';
+import { UsuarioEntity } from 'src/usuario/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventoDto } from './evento.dto';
-import { UsuarioEntity } from 'src/usuario/usuario.entity';
 
 @Injectable()
 export class EventoService {
   constructor(
     @InjectRepository(EventoEntity)
     private eventoRepository: Repository<EventoEntity>,
-
     @InjectRepository(UsuarioEntity)
-    private usuarioRepository: Repository<UsuarioEntity>,
-  ) {}
+    private usuarioRepository: Repository<UsuarioEntity>
+  ) { }
 
   findAll() {
     return this.eventoRepository.find();
   }
 
+  async findPagination(page: number, limit: number) {
+    const [result, total] = await this.eventoRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      data: result,
+      count: total,
+      page,
+      limit,
+    };
+  }
+
   async findById(id: string): Promise<EventoEntity> {
-    const findOne = await this.eventoRepository.findOne({ where: { id } });
+    const findOne = await this.eventoRepository.findOne({
+      where: { id },
+      relations: { usuarios: true },
+    });
     if (!findOne) {
       throw new NotFoundException('Evento não encontrado com o id ' + id);
     }
@@ -39,81 +55,68 @@ export class EventoService {
     return this.eventoRepository.save(newEvento);
   }
 
-  async update({ id, ...dto }: EventoDto) {
-    await this.findById(id);
-    this.validaEvento({id, ...dto})
-    return this.eventoRepository.save({ id, ...dto });
+  async update(evento: EventoDto) {
+    await this.findById(evento.id);
+    return this.eventoRepository.save(evento);
   }
 
-  private validaEvento(evento: EventoDto) {
-    this.validaDataEvento(evento);
+  private async validaEvento(evento: EventoDto) {
+    this.validaPrenchimentoCampos(evento);
     this.validaSeExisteParticipante(evento);
-    this.validaStatusEvento(evento);
-    this.validaStatusParaAdicionarParticipante(evento.id);
-    this.validaLimiteParticipantes(evento);
+    this.validaDataEvento(evento);
+    await this.validaStatusEvento(evento);
     this.validaTipoEvento(evento);
+    this.validaDescricao(evento);
   }
 
   private validaDataEvento(evento: EventoEntity | EventoDto) {
     const dataAtual = new Date();
-    if (evento.data < dataAtual && evento.tipo == 'não recorrente'){
-      throw new BadRequestException('A data do evento deve ser maior que a data atual.');
+    const dataEvento = new Date(evento.data);
+    if (dataEvento < dataAtual && evento.tipo == 'não recorrente') {
+      throw new BadRequestException(
+        'Para eventos não recorrentes, a data do evento deve ser maior ou igual à que a data atual.',
+      );
     }
-    
   }
 
   private validaTipoEvento(evento: EventoEntity | EventoDto) {
     if (evento.tipo === 'recorrente' && !evento.diaSemana) {
-      throw new BadRequestException('Para eventos recorrentes, é necessário preencher o campo "dia da semana".');
+      throw new BadRequestException(
+        'Para eventos recorrentes, é necessário preencher o campo Dia da semana.',
+      );
     }
   }
 
   private validaDescricao(evento: EventoEntity | EventoDto) {
     if (evento.descricao.length < 20) {
-      throw new BadRequestException('A descrição do evento deve ter no mínimo 20 caracteres.');
+      throw new BadRequestException(
+        'A descrição do evento deve ter no mínimo 20 caracteres.',
+      );
     }
   }
 
-  private async validaSeExisteParticipante(evento: EventoDto) {
-    if (!evento.usuarioIds || evento.usuarioIds.length === 0) {
-      return;
-    }
-
-    const usuarios = await this.usuarioRepository.find({
-      where: {id: In(evento.usuarioIds)}
-    });
-
-    if (usuarios.length !== evento.usuarioIds.length) {
-      throw new BadRequestException('Um ou mais participantes não existem.');
+  private validaSeExisteParticipante(evento: EventoDto) {
+    if (evento.quantidadeParticipantes < 1) {
+      throw new BadRequestException(
+        'Limite mínimo de 1 participante no evento.',
+      );
     }
   }
 
-  private validaStatusEvento(dto: EventoDto, existingEvent?: EventoEntity) {
+  private validaStatusEvento(dto: EventoDto) {
     const statusInativos = ['I', 'E'];
-    if (statusInativos.includes(dto.status.toLowerCase())) {
-      throw new BadRequestException('Não é permitido criar eventos inativos ou encerrados.');
-    }
-    if (existingEvent && statusInativos.includes(existingEvent.status) && dto.status !== existingEvent.status) {
-      throw new BadRequestException('Não é permitido alterar o status de eventos inativos ou encerrados.');
-    }
-  }
-
-  private async validaStatusParaAdicionarParticipante(eventoId: string) {
-    const evento = await this.findById(eventoId);
-    const statusInativos = ['I', 'E'];
-    if (statusInativos.includes(evento.status.toUpperCase())) {
-      throw new BadRequestException('Não é permitido adicionar participantes a eventos inativos ou encerrados.');
+    if (statusInativos.includes(dto.status.toUpperCase())) {
+      throw new BadRequestException(
+        'Não é permitido criar ou alterar eventos inativos ou encerrados.',
+      );
     }
   }
 
-  private async validaLimiteParticipantes(evento: EventoDto) {
-    const eventoExistente = await this.findById(evento.id);
-    const numeroParticipantesAtual = eventoExistente.usuarios ? eventoExistente.usuarios.length : 0;
-    const numeroParticipantesNovos = evento.usuarioIds ? evento.usuarioIds.length : 0;
-
-    if (numeroParticipantesAtual + numeroParticipantesNovos > eventoExistente.quantidadeParticipantes) {
-      throw new BadRequestException('A quantidade de participantes excede o limite do evento.');
+  private validaPrenchimentoCampos(evento: EventoDto) {
+    if (!evento.titulo || !evento.descricao || !evento.tipo || !evento.data) {
+      throw new BadRequestException(
+        'Alguns campos obrigatórios não foram preenchidos.',
+      );
     }
   }
-
 }

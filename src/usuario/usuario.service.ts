@@ -30,20 +30,20 @@ export class UsuarioService {
   }
 
   async create(dto: UsuarioDto) {
+    await this.validaUsuario(dto);
     const newUsuario = this.usuarioRepository.create(dto);
-    this.validaUsuario(dto)
     return this.usuarioRepository.save(newUsuario);
   }
 
   async update(dto: UsuarioDto) {
     await this.findById(dto.id);
-    this.validaUsuario(dto)
+    await this.validaUsuario(dto)
     return this.usuarioRepository.save(dto);
   }
 
-  private validaUsuario(usuario: UsuarioEntity | UsuarioDto) {
+  private async validaUsuario(usuario: UsuarioEntity | UsuarioDto) {
     this.validaDataNasc(usuario);
-    this.validaEmail(usuario);
+    await this.validaEmail(usuario);
     this.validaSenha(usuario);
   }
 
@@ -63,7 +63,7 @@ export class UsuarioService {
   }
 
   private validaSenha(dto: UsuarioEntity | UsuarioDto) {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?.&])[A-Za-z\d@$!%*?.&]{8,}$/;
     if (!dto.senha.match(regex)) {
       throw new BadRequestException('A senha deve conter pelo menos 8 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.');
     }
