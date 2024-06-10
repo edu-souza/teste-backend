@@ -4,6 +4,8 @@ Trabalho 02 - Construção de uma Aplicação Web de Back-end -
 10/06/2024
 
 Dupla Edauardo de Souza / Henrique Urbano
+
+obs: Criamos 9 validações, mas todas nas tabelas de "Usuário" e "Evento". As tabelas de "Modalidade" e "Cidade" não possuem validações, visto que não serão cadastradas pelo usuário.
 ______________________________________________________________
 
 ## Instalação
