@@ -15,7 +15,7 @@ export class EventoService {
   ) { }
 
   findAll() {
-    return this.eventoRepository.find({ relations: ['cidade'] });
+    return this.eventoRepository.find({ relations: ['cidade', 'modalidade'] });
   }
 
   async findPagination(page: number, limit: number) {
@@ -35,7 +35,7 @@ export class EventoService {
   async findById(id: string): Promise<EventoEntity> {
     const findOne = await this.eventoRepository.findOne({
       where: { id },
-      relations: ['cidade'],
+      relations: ['cidade', 'modalidade'],
     });
     if (!findOne) {
       throw new NotFoundException('Evento não encontrado com o id ' + id);
@@ -55,9 +55,10 @@ export class EventoService {
     return this.eventoRepository.save(newEvento);
   }
 
-  async update(evento: EventoDto) {
-    await this.findById(evento.id);
-    return this.eventoRepository.save(evento);
+  async update(dto: EventoDto) {
+    await this.validaEvento(dto);
+    await this.findById(dto.id);
+    return this.eventoRepository.save(dto);
   }
 
   private async validaEvento(evento: EventoDto) {
@@ -104,10 +105,10 @@ export class EventoService {
   }
 
   private validaStatusEvento(dto: EventoDto) {
-    const statusInativos = ['I', 'E'];
+    const statusInativos = ['I'];
     if (statusInativos.includes(dto.status.toUpperCase())) {
       throw new BadRequestException(
-        'Não é permitido criar ou alterar eventos inativos ou encerrados.',
+        'Não é permitido criar ou alterar eventos inativos',
       );
     }
   }

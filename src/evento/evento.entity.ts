@@ -1,4 +1,5 @@
 import { CidadeEntity } from 'src/cidade/cidade.entity';
+import { ModalidadeEntity } from 'src/modalidade/modalidade.entity';
 import { UsuarioEntity } from 'src/usuario/usuario.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -45,6 +46,9 @@ export class EventoEntity {
 
   @ManyToOne(() => CidadeEntity, cidade => cidade.eventos)
   cidade: CidadeEntity;
+
+  @ManyToOne(() => ModalidadeEntity, modalidade => modalidade.eventos)
+  modalidade: ModalidadeEntity;
 
   @ManyToMany(() => UsuarioEntity, usuario => usuario.eventos)
   @JoinTable({
