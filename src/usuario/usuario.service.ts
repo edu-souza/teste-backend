@@ -12,13 +12,16 @@ export class UsuarioService {
   ) { }
 
   findAll() {
-    return this.usuarioRepository.find();
+    return this.usuarioRepository.find({ relations: ['cidade'] });
   }
 
   async findById(id: string): Promise<UsuarioEntity> {
-    const findOne = await this.usuarioRepository.findOne({ where: { id } });
+    const findOne = await this.usuarioRepository.findOne({
+      where: { id },
+      relations: ['cidade'], // Adicionando a relação 'cidade' aqui
+    });
     if (!findOne) {
-      throw new NotFoundException('Usuario não encontrado com o id ' + id);
+      throw new NotFoundException('Usuário não encontrado com o id ' + id);
     }
     return findOne;
   }

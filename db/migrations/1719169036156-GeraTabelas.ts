@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class GeraTables1717878003754 implements MigrationInterface {
-    name = 'GeraTables1717878003754'
+export class GeraTabelas1719169036156 implements MigrationInterface {
+    name = 'GeraTabelas1719169036156'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "evento" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "titulo" character varying(100) NOT NULL, "descricao" text NOT NULL, "tipo" character varying(100) NOT NULL, "data" TIMESTAMP NOT NULL, "senha" character varying(30) NOT NULL, "hora" TIME, "diaSemana" character varying, "quantidadeParticipantes" integer NOT NULL, "bairro" character varying NOT NULL, "rua" character varying NOT NULL, "numero" character varying NOT NULL, "complemento" character varying, "latitude" character varying NOT NULL, "longitude" character varying NOT NULL, "status" character varying NOT NULL, "cidadeId" uuid, CONSTRAINT "PK_ceb2e9607555230aee6aff546b0" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "evento" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "titulo" character varying(100) NOT NULL, "descricao" text NOT NULL, "tipo" character varying(100) NOT NULL, "data" TIMESTAMP NOT NULL, "hora" TIME, "diaSemana" character varying, "quantidadeParticipantes" integer NOT NULL, "bairro" character varying NOT NULL, "rua" character varying NOT NULL, "numero" character varying NOT NULL, "complemento" character varying, "status" character varying NOT NULL, "cidadeId" uuid, CONSTRAINT "PK_ceb2e9607555230aee6aff546b0" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "cidade" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nome" character varying NOT NULL, "estado" character(2) NOT NULL, CONSTRAINT "PK_9fefdadd1d47000e7fa6d2abc8c" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "usuario" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nome" character varying(100) NOT NULL, "email" character varying(100) NOT NULL, "data_nascimento" TIMESTAMP NOT NULL, "senha" character varying(30) NOT NULL, "cidadeId" uuid, CONSTRAINT "PK_a56c58e5cabaa04fb2c98d2d7e2" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "modalidade" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nome" character varying(100) NOT NULL, "icone" text, CONSTRAINT "PK_6ed9e01b68c48e129e0e41fc202" PRIMARY KEY ("id"))`);

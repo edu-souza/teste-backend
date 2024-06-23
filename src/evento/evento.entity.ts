@@ -10,7 +10,7 @@ export class EventoEntity {
   @Column({ length: 100 })
   titulo: string;
 
-  @Column({ type: 'text'})
+  @Column({ type: 'text' })
   descricao: string;
 
   @Column({ length: 100 })
@@ -19,16 +19,13 @@ export class EventoEntity {
   @Column({})
   data: Date;
 
-  @Column({ length: 30 })
-  senha: string;
-
-  @Column({ type: 'time', nullable: true})
+  @Column({ type: 'time', nullable: true })
   hora: Date;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   diaSemana: string;
 
-  @Column({ type: 'integer'})
+  @Column({ type: 'integer' })
   quantidadeParticipantes: number;
 
   @Column({})
@@ -40,14 +37,8 @@ export class EventoEntity {
   @Column({})
   numero: string;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   complemento: string;
-
-  @Column({ })
-  latitude: string;
-
-  @Column({})
-  longitude: string;
 
   @Column({})
   status: string;

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { EventoEntity } from './evento.entity';
 import { UsuarioEntity } from 'src/usuario/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,7 +15,7 @@ export class EventoService {
   ) { }
 
   findAll() {
-    return this.eventoRepository.find();
+    return this.eventoRepository.find({ relations: ['cidade'] });
   }
 
   async findPagination(page: number, limit: number) {
@@ -35,7 +35,7 @@ export class EventoService {
   async findById(id: string): Promise<EventoEntity> {
     const findOne = await this.eventoRepository.findOne({
       where: { id },
-      relations: { usuarios: true },
+      relations: ['cidade'],
     });
     if (!findOne) {
       throw new NotFoundException('Evento não encontrado com o id ' + id);

@@ -6,15 +6,17 @@ import { dataSourceOptions } from 'db/data-source';
 import { ModalidadeModule } from './modalidade/modalidade.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { EventoModule } from './evento/evento.module';
+import { CidadeModule } from './cidade/cidade.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions),
     ModalidadeModule,
     UsuarioModule,
-    EventoModule
+    EventoModule,
+    CidadeModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
