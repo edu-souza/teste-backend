@@ -10,6 +10,7 @@ import {
 
     import { UsuarioService } from './usuario.service';
     import { UsuarioDto } from './usuario.dto';
+import { Public } from 'src/auth/auth.metadata';
   
   @Controller('usuarios')
   export class UsuarioController {

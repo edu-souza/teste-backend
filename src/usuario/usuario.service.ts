@@ -3,6 +3,8 @@ import { Repository } from 'typeorm';
 import { UsuarioEntity } from './usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsuarioDto } from './usuario.dto';
+import { Usuario } from './usuario.interface';
+import { Public } from 'src/auth/auth.metadata';
 
 @Injectable()
 export class UsuarioService {
@@ -12,13 +14,27 @@ export class UsuarioService {
   ) { }
 
   findAll() {
-    return this.usuarioRepository.find();
+    return this.usuarioRepository.find({relations: ['cidade']});
+  }
+
+  async findByEmail(email: string): Promise<UsuarioEntity> {
+    const findOne = await this.usuarioRepository.findOne({ 
+      where: { email },
+      relations: ['cidade'], 
+    });
+    if (!findOne) {
+      throw new NotFoundException('Usuário não encontrado com o email ' + email);
+    }
+    return findOne;
   }
 
   async findById(id: string): Promise<UsuarioEntity> {
-    const findOne = await this.usuarioRepository.findOne({ where: { id } });
+    const findOne = await this.usuarioRepository.findOne({ 
+      where: { id },
+      relations: ['cidade'], // Adicionando a relação 'cidade' aqui
+    });
     if (!findOne) {
-      throw new NotFoundException('Usuario não encontrado com o id ' + id);
+      throw new NotFoundException('Usuário não encontrado com o id ' + id);
     }
     return findOne;
   }
