@@ -10,4 +10,4 @@ import { UsuarioEntity } from 'src/usuario/usuario.entity';
   controllers: [CidadeController],
   providers: [CidadeService],
 })
-export class CidadeModule {}
+export class CidadeModule { }
