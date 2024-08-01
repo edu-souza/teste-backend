@@ -9,15 +9,18 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 import { EventoService } from './evento.service';
 import { EventoDto } from './evento.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('eventos')
 export class EventoController {
   constructor(private eventoService: EventoService) { }
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     return this.eventoService.findAll();
