@@ -5,8 +5,6 @@ import {
   IsUUID,
   IsDate,
   IsNumber,
-  IsLatitude,
-  IsLongitude,
   Length,
   isArray,
   IsArray,
@@ -36,11 +34,6 @@ export class EventoDto {
   @IsNotEmpty()
   data: Date;
 
-  @IsString()
-  @Length(1, 30)
-  @IsNotEmpty()
-  senha: string;
-
   @IsDate()
   @IsOptional()
   hora: Date;
@@ -69,14 +62,6 @@ export class EventoDto {
   @IsOptional()
   complemento: string;
 
-  @IsLatitude()
-  @IsNotEmpty()
-  latitude: string;
-
-  @IsLongitude()
-  @IsNotEmpty()
-  longitude: string;
-
   @IsString()
   @IsNotEmpty()
   status: string;
@@ -84,6 +69,10 @@ export class EventoDto {
   @IsUUID()
   @IsNotEmpty()
   cidadeId: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  modalidade: string;
 
   @IsArray()
   @ArrayNotEmpty()

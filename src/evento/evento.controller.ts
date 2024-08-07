@@ -20,7 +20,6 @@ import { AuthGuard } from 'src/auth/auth.guard';
 export class EventoController {
   constructor(private eventoService: EventoService) { }
 
-  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     return this.eventoService.findAll();

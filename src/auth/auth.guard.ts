@@ -28,7 +28,7 @@ import { Reflector } from '@nestjs/core';
       const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secret,
       });
-      console.log('Token is valid', payload); // Log para token válido
+      console.log('Token is valid e entrou na modalidade', payload); // Log para token válido
       request['user'] = payload;
     } catch (err) {
       console.log('Token validation failed', err); // Log para falha na validação do token

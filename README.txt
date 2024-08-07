@@ -1,12 +1,14 @@
 ## Descrição
 
-Trabalho 02 - Construção de uma Aplicação Web de Back-end -
-10/06/2024
+Trabalho 03 - Integração Aplicativo e Aplicação Web 
+23/06/2024
 
-Dupla Edauardo de Souza / Henrique Urbano
+Dupla Eduardo de Souza / Henrique Urbano
+
+obs: Criamos 9 validações, mas todas nas tabelas de "Usuário" e "Evento". As tabelas de "Modalidade" e "Cidade" não possuem validações, visto que não serão cadastradas pelo usuário.
 ______________________________________________________________
 
-## Instalação
+## Instalação Back-End
 
 $ npm install
 
@@ -31,9 +33,16 @@ $ npm run typeorm-seed:run
 
 ______________________________________________________________
 
-## Subir Servidor de Aplicação
+## Subir Servidor de Aplicação Back-End
 
 $ npm start
 ______________________________________________________________
 
 ## Importar as collections da pasta CollectionsRequisições para o Postman
+
+______________________________________________________________
+
+## Instalação Front-End
+
+$ npm install
+$ npm start

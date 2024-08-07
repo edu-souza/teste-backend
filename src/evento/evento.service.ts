@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { EventoEntity } from './evento.entity';
 import { UsuarioEntity } from 'src/usuario/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventoDto } from './evento.dto';
+import { ModalidadeEntity } from 'src/modalidade/modalidade.entity'; // Certifique-se de importar a entidade correta
 
 @Injectable()
 export class EventoService {
@@ -11,11 +12,13 @@ export class EventoService {
     @InjectRepository(EventoEntity)
     private eventoRepository: Repository<EventoEntity>,
     @InjectRepository(UsuarioEntity)
-    private usuarioRepository: Repository<UsuarioEntity>
+    private usuarioRepository: Repository<UsuarioEntity>,
+    @InjectRepository(ModalidadeEntity)
+    private modalidadeRepository: Repository<ModalidadeEntity>
   ) { }
 
   findAll() {
-    return this.eventoRepository.find();
+    return this.eventoRepository.find({ relations: ['cidade', 'modalidade'] });
   }
 
   async findPagination(page: number, limit: number) {
@@ -35,7 +38,7 @@ export class EventoService {
   async findById(id: string): Promise<EventoEntity> {
     const findOne = await this.eventoRepository.findOne({
       where: { id },
-      relations: { usuarios: true },
+      relations: ['cidade', 'modalidade'],
     });
     if (!findOne) {
       throw new NotFoundException('Evento não encontrado com o id ' + id);
@@ -51,13 +54,28 @@ export class EventoService {
 
   async create(dto: EventoDto) {
     await this.validaEvento(dto);
-    const newEvento = this.eventoRepository.create(dto);
+    const modalidade = await this.modalidadeRepository.findOne({ where: { id: dto.modalidade } });
+
+    if (!modalidade) {
+      throw new NotFoundException('Modalidade não encontrada');
+    }
+
+    const newEvento = this.eventoRepository.create({ ...dto, modalidade });
     return this.eventoRepository.save(newEvento);
   }
 
-  async update(evento: EventoDto) {
-    await this.findById(evento.id);
-    return this.eventoRepository.save(evento);
+  async update(dto: EventoDto) {
+    await this.validaEvento(dto);
+    const existingEvento = await this.findById(dto.id);
+    
+    const modalidade = await this.modalidadeRepository.findOne({ where: { id: dto.modalidade } });
+
+    if (!modalidade) {
+      throw new NotFoundException('Modalidade não encontrada');
+    }
+
+    const updatedEvento = this.eventoRepository.merge(existingEvento, { ...dto, modalidade });
+    return this.eventoRepository.save(updatedEvento);
   }
 
   private async validaEvento(evento: EventoDto) {
@@ -104,10 +122,10 @@ export class EventoService {
   }
 
   private validaStatusEvento(dto: EventoDto) {
-    const statusInativos = ['I', 'E'];
+    const statusInativos = ['I'];
     if (statusInativos.includes(dto.status.toUpperCase())) {
       throw new BadRequestException(
-        'Não é permitido criar ou alterar eventos inativos ou encerrados.',
+        'Não é permitido criar ou alterar eventos inativos',
       );
     }
   }
