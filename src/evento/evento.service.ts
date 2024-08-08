@@ -18,7 +18,7 @@ export class EventoService {
   ) { }
 
   findAll() {
-    return this.eventoRepository.find({ relations: ['cidade', 'modalidade'] });
+    return this.eventoRepository.find({ relations: ['cidade', 'modalidade','usuarios'] });
   }
 
   async findPagination(page: number, limit: number) {
