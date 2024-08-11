@@ -38,7 +38,7 @@ export class EventoService {
   async findById(id: string): Promise<EventoEntity> {
     const findOne = await this.eventoRepository.findOne({
       where: { id },
-      relations: ['cidade', 'modalidade'],
+      relations: ['cidade', 'modalidade','usuarios'],
     });
     if (!findOne) {
       throw new NotFoundException('Evento não encontrado com o id ' + id);
