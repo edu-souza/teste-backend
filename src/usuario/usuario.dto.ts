@@ -26,5 +26,9 @@ import {
     @IsString()
     @IsNotEmpty()
     senha: string;
+
+    @IsString()
+    @IsOptional()
+    imagem: string;
   }
   

@@ -19,6 +19,9 @@ export class UsuarioEntity {
   @Column({ length: 30 })
   senha: string;
 
+  @Column({ type: 'text', nullable: true })
+  imagem: string;
+
   @ManyToOne(() => CidadeEntity, cidade => cidade.usuarios)
   cidade: CidadeEntity;
 

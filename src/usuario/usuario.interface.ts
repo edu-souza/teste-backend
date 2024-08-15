@@ -9,4 +9,5 @@ export interface Usuario {
   senha: string;
   cidade: Cidade; 
   eventos: string[];
+  imagem: string;
 }
