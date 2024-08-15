@@ -5,12 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsuarioDto } from './usuario.dto';
 import { Usuario } from './usuario.interface';
 import { Public } from 'src/auth/auth.metadata';
+import { HashService } from './hash.service';
 
 @Injectable()
 export class UsuarioService {
   constructor(
     @InjectRepository(UsuarioEntity)
     private usuarioRepository: Repository<UsuarioEntity>,
+    private hashService: HashService,
   ) { }
 
   findAll() {
@@ -47,6 +49,10 @@ export class UsuarioService {
 
   async create(dto: UsuarioDto) {
     await this.validaUsuario(dto);
+
+    // Criptografando a senha antes de salvar
+    dto.senha = await this.hashService.hashPassword(dto.senha);
+
     const newUsuario = this.usuarioRepository.create(dto);
     return this.usuarioRepository.save(newUsuario);
   }
@@ -54,6 +60,12 @@ export class UsuarioService {
   async update(dto: UsuarioDto) {
     await this.findById(dto.id);
     await this.validaUsuario(dto)
+
+    // Se a senha foi atualizada, estamos criptografando antes de salvar
+    if (dto.senha) {
+      dto.senha = await this.hashService.hashPassword(dto.senha);
+    }
+
     return this.usuarioRepository.save(dto);
   }
 

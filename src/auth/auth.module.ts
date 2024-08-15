@@ -6,6 +6,7 @@ import { jwtConstants } from './constants';
 import { UsuarioModule } from 'src/usuario/usuario.module';
 import { AuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { HashService } from 'src/usuario/hash.service';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { APP_GUARD } from '@nestjs/core';
     //   useClass: AuthGuard
     // },
     AuthService,
+    HashService,
   ],
   controllers: [AuthController],
   exports: [AuthService],

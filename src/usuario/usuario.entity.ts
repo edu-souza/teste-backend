@@ -16,7 +16,7 @@ export class UsuarioEntity {
   @Column({ name: 'data_nascimento'})
   dataNascimento: Date;
 
-  @Column({ length: 30 })
+  @Column({ length: 255 })
   senha: string;
 
   @Column({ type: 'text', nullable: true })
