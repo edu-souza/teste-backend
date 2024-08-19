@@ -14,14 +14,10 @@ import { HashService } from 'src/usuario/hash.service';
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '5m' }, // Define o tempo de expiração para 5 minutos
+      signOptions: { expiresIn: '60m' }, // Define o tempo de expiração para 60 minutos
     }),
   ],
   providers: [
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard
-    // },
     AuthService,
     HashService,
   ],

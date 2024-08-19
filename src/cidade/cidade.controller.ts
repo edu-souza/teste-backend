@@ -9,11 +9,13 @@ import {
   } from '@nestjs/common';
 
     import { CidadeService } from './cidade.service';
+import { Public } from 'src/auth/auth.metadata';
   
   @Controller('cidades')
   export class CidadeController {
     constructor(private cidadeService: CidadeService) {}
   
+    @Public()
     @Get()
     findAll() {
       return this.cidadeService.findAll();

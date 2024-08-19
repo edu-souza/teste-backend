@@ -18,9 +18,9 @@ export class AuthService {
     // Comparando a senha fornecida com a senha armazenada (criptografada)
     const isPasswordValid = await this.hashService.comparePasswords(pass, user?.senha);
 
-    console.log('Senha fornecida:', pass);
-    console.log('Hash armazenado:', user?.senha);
-    console.log('Resultado da comparação:', isPasswordValid);
+    // console.log('Senha fornecida:', pass);
+    // console.log('Hash armazenado:', user?.senha);
+    // console.log('Resultado da comparação:', isPasswordValid);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Credenciais inválidas');

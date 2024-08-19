@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CidadeEntity } from './cidade.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Public } from 'src/auth/auth.metadata';
 
 @Injectable()
 export class CidadeService {
