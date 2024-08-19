@@ -47,6 +47,7 @@ export class UsuarioService {
     return { ...findById, id };
   }
 
+  @Public()
   async create(dto: UsuarioDto) {
     await this.validaUsuario(dto);
 
@@ -71,7 +72,7 @@ export class UsuarioService {
 
   private async validaUsuario(usuario: UsuarioEntity | UsuarioDto) {
     this.validaDataNasc(usuario);
-    await this.validaEmail(usuario);
+    //await this.validaEmail(usuario);
     this.validaSenha(usuario);
   }
 
@@ -83,14 +84,18 @@ export class UsuarioService {
     };
   }
 
-  private async validaEmail(dto: UsuarioEntity | UsuarioDto) {
-    const usuarioExist = await this.usuarioRepository.findOne({ where: { email: dto.email } });
-    if (usuarioExist && usuarioExist.id !== dto.id) {
-      throw new BadRequestException('Email já está em uso');
-    }
-  }
+  // private async validaEmail(dto: UsuarioEntity | UsuarioDto) {
+  //   const usuarioExist = await this.usuarioRepository.findOne({ where: { email: dto.email } });
+  //   if (usuarioExist && usuarioExist.id !== dto.id) {
+  //     throw new BadRequestException('Email já está em uso');
+  //   }
+  // }
 
   private validaSenha(dto: UsuarioEntity | UsuarioDto) {
+    if (typeof dto.senha !== 'string') {
+      throw new BadRequestException('Senha não fornecida ou não é uma string.');
+    }
+  
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?.&])[A-Za-z\d@$!%*?.&]{8,}$/;
     if (!dto.senha.match(regex)) {
       throw new BadRequestException('A senha deve conter pelo menos 8 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.');
