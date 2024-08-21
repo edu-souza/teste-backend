@@ -72,7 +72,7 @@ export class UsuarioService {
 
   private async validaUsuario(usuario: UsuarioEntity | UsuarioDto) {
     this.validaDataNasc(usuario);
-    //await this.validaEmail(usuario);
+    await this.validaEmail(usuario);
     this.validaSenha(usuario);
   }
 
@@ -84,12 +84,12 @@ export class UsuarioService {
     };
   }
 
-  // private async validaEmail(dto: UsuarioEntity | UsuarioDto) {
-  //   const usuarioExist = await this.usuarioRepository.findOne({ where: { email: dto.email } });
-  //   if (usuarioExist && usuarioExist.id !== dto.id) {
-  //     throw new BadRequestException('Email já está em uso');
-  //   }
-  // }
+  private async validaEmail(dto: UsuarioEntity | UsuarioDto) {
+    const usuarioExist = await this.usuarioRepository.findOne({ where: { email: dto.email } });
+    if (usuarioExist && usuarioExist.id !== dto.id) {
+      throw new BadRequestException('Email já está em uso');
+    }
+  }
 
   private validaSenha(dto: UsuarioEntity | UsuarioDto) {
     if (typeof dto.senha !== 'string') {
