@@ -14,7 +14,6 @@ export class AuthController {
     console.log('Entrou no login')
     return this.authService.signIn(signInDto.username, signInDto.password);
   }
-
   
   @Get('profile')
   getProfile(@Request() req) {
