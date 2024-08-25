@@ -47,6 +47,7 @@ export class UsuarioService {
     return { ...findById, id };
   }
 
+  @Public()
   async create(dto: UsuarioDto) {
     await this.validaUsuario(dto);
 
@@ -91,6 +92,10 @@ export class UsuarioService {
   }
 
   private validaSenha(dto: UsuarioEntity | UsuarioDto) {
+    if (typeof dto.senha !== 'string') {
+      throw new BadRequestException('Senha não fornecida ou não é uma string.');
+    }
+  
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?.&])[A-Za-z\d@$!%*?.&]{8,}$/;
     if (!dto.senha.match(regex)) {
       throw new BadRequestException('A senha deve conter pelo menos 8 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.');
