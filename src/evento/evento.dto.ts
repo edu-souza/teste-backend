@@ -10,6 +10,9 @@ import {
   IsArray,
   ArrayNotEmpty,
 } from 'class-validator';
+import { ModalidadeEntity } from 'src/modalidade/modalidade.entity';
+import { UsuarioEntity } from 'src/usuario/usuario.entity';
+import { CidadeEntity } from 'src/cidade/cidade.entity';
 
 export class EventoDto {
   @IsUUID()
@@ -56,6 +59,22 @@ export class EventoDto {
 
   @IsString()
   @IsNotEmpty()
+  latitude: string;
+  
+  @IsString()
+  @IsNotEmpty()
+  longitude: string;
+  
+  @IsString()
+  @IsNotEmpty()
+  imagem: string;
+  
+  @IsString()
+  @IsNotEmpty()
+  admin: string;
+
+  @IsString()
+  @IsNotEmpty()
   numero: string;
 
   @IsString()
@@ -68,15 +87,15 @@ export class EventoDto {
 
   @IsUUID()
   @IsNotEmpty()
-  cidadeId: string;
+  cidadeId: CidadeEntity;
 
   @IsUUID()
   @IsNotEmpty()
-  modalidade: string;
+  modalidade: ModalidadeEntity;
 
   @IsArray()
   @ArrayNotEmpty()
   @IsUUID("4", { each: true })
   @IsOptional()
-  usuarioIds: string[];
+  usuarioIds: UsuarioEntity[];
 }

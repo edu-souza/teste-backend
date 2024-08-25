@@ -4,17 +4,12 @@ import { EventoEntity } from './evento.entity';
 import { UsuarioEntity } from 'src/usuario/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventoDto } from './evento.dto';
-import { ModalidadeEntity } from 'src/modalidade/modalidade.entity'; // Certifique-se de importar a entidade correta
 
 @Injectable()
 export class EventoService {
   constructor(
     @InjectRepository(EventoEntity)
-    private eventoRepository: Repository<EventoEntity>,
-    @InjectRepository(UsuarioEntity)
-    private usuarioRepository: Repository<UsuarioEntity>,
-    @InjectRepository(ModalidadeEntity)
-    private modalidadeRepository: Repository<ModalidadeEntity>
+    private eventoRepository: Repository<EventoEntity>
   ) { }
 
   findAll() {
@@ -54,13 +49,8 @@ export class EventoService {
 
   async create(dto: EventoDto) {
     await this.validaEvento(dto);
-    const modalidade = await this.modalidadeRepository.findOne({ where: { id: dto.modalidade } });
 
-    if (!modalidade) {
-      throw new NotFoundException('Modalidade não encontrada');
-    }
-
-    const newEvento = this.eventoRepository.create({ ...dto, modalidade });
+    const newEvento = this.eventoRepository.create(dto);
     return this.eventoRepository.save(newEvento);
   }
 
@@ -68,13 +58,7 @@ export class EventoService {
     await this.validaEvento(dto);
     const existingEvento = await this.findById(dto.id);
     
-    const modalidade = await this.modalidadeRepository.findOne({ where: { id: dto.modalidade } });
-
-    if (!modalidade) {
-      throw new NotFoundException('Modalidade não encontrada');
-    }
-
-    const updatedEvento = this.eventoRepository.merge(existingEvento, { ...dto, modalidade });
+    const updatedEvento = this.eventoRepository.merge(existingEvento, dto);
     return this.eventoRepository.save(updatedEvento);
   }
 

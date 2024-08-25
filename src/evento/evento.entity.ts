@@ -29,13 +29,25 @@ export class EventoEntity {
   @Column({ type: 'integer' })
   quantidadeParticipantes: number;
 
+  @Column({nullable: true})
+  latitude: string;
+
+  @Column({nullable: true})
+  longitude: string;
+
+  @Column({ type: 'text', nullable: true })
+  imagem: string;
+
+  @Column({ nullable: true })
+  admin: string;
+
   @Column({})
   bairro: string;
 
   @Column({})
   rua: string;
 
-  @Column({})
+  @Column({ nullable: true })
   numero: string;
 
   @Column({ nullable: true })
@@ -43,6 +55,9 @@ export class EventoEntity {
 
   @Column({})
   status: string;
+
+  @Column({})
+  status_aprov: string;
 
   @ManyToOne(() => CidadeEntity, cidade => cidade.eventos)
   cidade: CidadeEntity;
