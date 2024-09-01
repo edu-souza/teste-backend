@@ -101,4 +101,13 @@ export class UsuarioService {
       throw new BadRequestException('A senha deve conter pelo menos 8 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.');
     }
   }
+
+  async saveRefreshToken(userId: string, refreshToken: string): Promise<void> {
+    await this.usuarioRepository.update(userId, { refreshToken });
+  }
+
+  async removeRefreshToken(userId: string): Promise<void> {
+    await this.usuarioRepository.update(userId, { refreshToken: null });
+  }
+  
 }

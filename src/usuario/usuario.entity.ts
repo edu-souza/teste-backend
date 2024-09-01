@@ -27,4 +27,7 @@ export class UsuarioEntity {
 
   @ManyToMany(() => EventoEntity, evento => evento.usuarios)
   eventos: EventoEntity[];
+
+  @Column({ type: 'text', nullable: true })
+  refreshToken: string | null;
 }
