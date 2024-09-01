@@ -8,7 +8,7 @@ import { UsuarioModule } from './usuario/usuario.module';
 import { EventoModule } from './evento/evento.module';
 import { CidadeModule } from './cidade/cidade.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 
 @Module({

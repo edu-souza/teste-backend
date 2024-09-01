@@ -1,4 +1,4 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, UseGuards, Get, Request } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, UseGuards, Get, Request, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './auth.metadata';
 
@@ -16,9 +16,14 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
-  refresh(@Body() body: { refresh_token: string }) {
-    console.log('TESTE' + this.authService.refreshToken(body.refresh_token));
-    return this.authService.refreshToken(body.refresh_token);
+  async refresh(@Body() body: { refresh_token: string }) {
+    try {
+      return await this.authService.refreshToken(body.refresh_token);
+    } catch (error) {
+      console.error('Erro ao tentar renovar o token:', error.message);
+      // Retorne uma resposta 401 para indicar que o token expirou
+      throw new UnauthorizedException('O refresh token expirou, faça login novamente.');
+    }
   }
 
   @Get('profile')
