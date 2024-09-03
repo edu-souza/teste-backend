@@ -4,22 +4,64 @@ import { EventoEntity } from './evento.entity';
 import { UsuarioEntity } from 'src/usuario/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventoDto } from './evento.dto';
+import { EventoUsuarioEntity } from 'src/evento_usuario/evento_usuario.entity';
 
 @Injectable()
 export class EventoService {
   constructor(
     @InjectRepository(EventoEntity)
-    private eventoRepository: Repository<EventoEntity>
+    private eventoRepository: Repository<EventoEntity>,
+    @InjectRepository(UsuarioEntity)
+    private usuarioRepository: Repository<UsuarioEntity>,
+    @InjectRepository(EventoUsuarioEntity)
+    private eventoUsuarioRepository: Repository<EventoUsuarioEntity>
   ) { }
 
   findAll() {
-    return this.eventoRepository.find({ relations: ['cidade', 'modalidade','usuarios'] });
+    return this.eventoRepository.find({
+      relations: ['cidade', 'modalidade', 'eventosUsuarios', 'eventosUsuarios.usuario'],
+    });
+  }
+
+  findEventosAprov() {
+    return this.eventoRepository.find({
+      where: { status_aprov: 'A' },
+      relations: ['cidade', 'modalidade', 'eventosUsuarios', 'eventosUsuarios.usuario'],
+    });
+  }
+
+  async countEventosPend() {
+    return this.eventoRepository.count({ where: { status_aprov: 'P' } });
+  }
+
+  async findMeusEventos(userId: string): Promise<EventoEntity[]> {
+    return this.eventoRepository.createQueryBuilder('evento')
+      .leftJoinAndSelect('evento.cidade', 'cidade')
+      .leftJoinAndSelect('evento.modalidade', 'modalidade')
+      .leftJoinAndSelect('evento.eventosUsuarios', 'eventosUsuarios')
+      .leftJoinAndSelect('eventosUsuarios.usuario', 'usuario')
+      .where('evento.admin = :userId', { userId })
+      .orWhere('eventosUsuarios.usuario.id = :userId::uuid', { userId })
+      .getMany();
+  }
+
+
+  async getSolicitacoesPendentes(userId: string): Promise<EventoEntity[]> {
+    return this.eventoRepository.createQueryBuilder('evento')
+      .leftJoinAndSelect('evento.cidade', 'cidade')
+      .leftJoinAndSelect('evento.modalidade', 'modalidade')
+      .leftJoinAndSelect('evento.eventosUsuarios', 'eventosUsuarios')
+      .leftJoinAndSelect('eventosUsuarios.usuario', 'usuario')
+      .where('evento.admin = :userId', { userId })
+      .andWhere('eventosUsuarios.statusParticipante = :status', { status: 'P' })
+      .getMany();
   }
 
   async findPagination(page: number, limit: number) {
     const [result, total] = await this.eventoRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
+      relations: ['cidade', 'modalidade', 'eventosUsuarios', 'eventosUsuarios.usuario'],
     });
 
     return {
@@ -33,7 +75,7 @@ export class EventoService {
   async findById(id: string): Promise<EventoEntity> {
     const findOne = await this.eventoRepository.findOne({
       where: { id },
-      relations: ['cidade', 'modalidade','usuarios'],
+      relations: ['cidade', 'modalidade', 'eventosUsuarios', 'eventosUsuarios.usuario'],
     });
     if (!findOne) {
       throw new NotFoundException('Evento não encontrado com o id ' + id);
@@ -50,22 +92,78 @@ export class EventoService {
   async create(dto: EventoDto) {
     await this.validaEvento(dto);
 
+    const admin = await this.usuarioRepository.findOne({ where: { id: dto.admin } });
+    if (!admin) {
+      throw new NotFoundException('Admin não encontrado');
+    }
+
     const newEvento = this.eventoRepository.create(dto);
-    return this.eventoRepository.save(newEvento);
+    const savedEvento = await this.eventoRepository.save(newEvento);
+
+    const eventoUsuarioAdmin = new EventoUsuarioEntity();
+    eventoUsuarioAdmin.evento = savedEvento;
+    eventoUsuarioAdmin.usuario = admin;
+    eventoUsuarioAdmin.statusParticipante = 'A';
+
+    await this.eventoUsuarioRepository.save(eventoUsuarioAdmin);
+
+    return savedEvento;
   }
 
   async update(dto: EventoDto) {
     await this.validaEvento(dto);
+
     const existingEvento = await this.findById(dto.id);
-    
+
     const updatedEvento = this.eventoRepository.merge(existingEvento, dto);
-    return this.eventoRepository.save(updatedEvento);
+
+    await this.eventoRepository.save(updatedEvento);
+
+    if (dto.usuarios && dto.usuarios.length > 0) {
+      await this.eventoUsuarioRepository.delete({ evento: updatedEvento });
+
+      const eventoUsuarios = dto.usuarios.map(dtoUsuario => {
+        const eventoUsuario = new EventoUsuarioEntity();
+        eventoUsuario.evento = updatedEvento;
+        eventoUsuario.usuario = dtoUsuario.usuario;
+        eventoUsuario.statusParticipante = dtoUsuario.statusParticipante;
+        return eventoUsuario;
+      });
+
+      await this.eventoUsuarioRepository.save(eventoUsuarios);
+    }
+
+    return updatedEvento;
+  }
+
+  async updateEventoUsuarios(dto: EventoDto) {
+    await this.validaEvento(dto);
+
+    const existingEvento = await this.findById(dto.id);
+
+    if (dto.usuarios && dto.usuarios.length > 0) {
+      await this.eventoUsuarioRepository.delete({ evento: existingEvento });
+
+      const eventoUsuarios = dto.usuarios.map(dtoUsuario => {
+        const eventoUsuario = new EventoUsuarioEntity();
+        eventoUsuario.evento = { id: dto.id } as EventoEntity;
+        eventoUsuario.usuario = dtoUsuario.usuario;
+        eventoUsuario.statusParticipante = dtoUsuario.statusParticipante;
+        return eventoUsuario;
+      });
+
+      await this.eventoUsuarioRepository.save(eventoUsuarios);
+    }
+
+    return existingEvento;
   }
 
   private async validaEvento(evento: EventoDto) {
     this.validaPrenchimentoCampos(evento);
     this.validaSeExisteParticipante(evento);
-    this.validaDataEvento(evento);
+    if (!evento.id) {
+      this.validaDataEvento(evento);
+    }
     await this.validaStatusEvento(evento);
     this.validaTipoEvento(evento);
     this.validaDescricao(evento);

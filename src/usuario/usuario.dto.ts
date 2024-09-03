@@ -30,5 +30,9 @@ import {
     @IsString()
     @IsOptional()
     imagem: string;
+
+    @IsString()
+    @IsNotEmpty()
+    acesso: string;
   }
   

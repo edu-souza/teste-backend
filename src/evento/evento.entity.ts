@@ -1,7 +1,7 @@
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { CidadeEntity } from 'src/cidade/cidade.entity';
 import { ModalidadeEntity } from 'src/modalidade/modalidade.entity';
-import { UsuarioEntity } from 'src/usuario/usuario.entity';
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { EventoUsuarioEntity } from 'src/evento_usuario/evento_usuario.entity';
 
 @Entity({ name: 'evento' })
 export class EventoEntity {
@@ -29,10 +29,10 @@ export class EventoEntity {
   @Column({ type: 'integer' })
   quantidadeParticipantes: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   latitude: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   longitude: string;
 
   @Column({ type: 'text', nullable: true })
@@ -63,14 +63,9 @@ export class EventoEntity {
   cidade: CidadeEntity;
 
   @ManyToOne(() => ModalidadeEntity, modalidade => modalidade.eventos)
-  @JoinColumn({ name: 'modalidadeId' })  // Adicione esta linha
+  @JoinColumn({ name: 'modalidadeId' })
   modalidade: ModalidadeEntity;
 
-  @ManyToMany(() => UsuarioEntity, usuario => usuario.eventos)
-  @JoinTable({
-    name: 'evento_usuarios',
-    joinColumn: { name: 'evento_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'usuario_id', referencedColumnName: 'id' }
-  })
-  usuarios: UsuarioEntity[];
+  @OneToMany(() => EventoUsuarioEntity, eventoUsuario => eventoUsuario.evento)
+  eventosUsuarios: EventoUsuarioEntity[];
 }
