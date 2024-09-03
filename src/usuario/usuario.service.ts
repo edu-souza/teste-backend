@@ -102,12 +102,12 @@ export class UsuarioService {
     }
   }
 
-  async saveRefreshToken(userId: string, refreshToken: string): Promise<void> {
-    await this.usuarioRepository.update(userId, { refreshToken });
+  async saveRefreshtoken(userId: string, refreshtoken: string): Promise<void> {
+    await this.usuarioRepository.update(userId, { refreshtoken });
   }
 
-  async removeRefreshToken(userId: string): Promise<void> {
-    await this.usuarioRepository.update(userId, { refreshToken: null });
+  async removeRefreshtoken(userId: string): Promise<void> {
+    await this.usuarioRepository.update(userId, { refreshtoken: null });
   }
   
 }
