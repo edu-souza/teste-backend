@@ -32,5 +32,5 @@ export class UsuarioEntity {
   eventosUsuarios: EventoUsuarioEntity[];
 
   @Column({ type: 'text', nullable: true })
-  refreshToken: string | null;
+  refreshtoken: string | null;
 }

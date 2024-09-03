@@ -18,7 +18,7 @@ export class AuthController {
   @Post('refresh')
   async refresh(@Body() body: { refresh_token: string }) {
     try {
-      return await this.authService.refreshToken(body.refresh_token);
+      return await this.authService.refreshtoken(body.refresh_token);
     } catch (error) {
       console.error('Erro ao tentar renovar o token:', error.message);
       // Retorne uma resposta 401 para indicar que o token expirou

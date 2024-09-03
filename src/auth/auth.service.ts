@@ -37,7 +37,7 @@ export class AuthService {
     console.log('Tokens gerados:', { access_token, refresh_token });
 
     // Aqui, salve o refresh_token no banco de dados associado ao usuário
-    await this.usersService.saveRefreshToken(user.id, refresh_token);
+    await this.usersService.saveRefreshtoken(user.id, refresh_token);
 
     return {
       access_token,
@@ -45,11 +45,11 @@ export class AuthService {
     };
   }
 
-  async refreshToken(refreshToken: string): Promise<{ access_token: string }> {
-    console.log('Tentando renovar o token:', refreshToken);
+  async refreshtoken(refreshtoken: string): Promise<{ access_token: string }> {
+    console.log('Tentando renovar o token:', refreshtoken);
   
     try {
-      const payload = await this.jwtService.verifyAsync(refreshToken, { secret: jwtConstants.secret });
+      const payload = await this.jwtService.verifyAsync(refreshtoken, { secret: jwtConstants.secret });
       console.log('Payload do token:', payload);
   
       const user = await this.usersService.findById(payload.sub);
@@ -60,7 +60,7 @@ export class AuthService {
         throw new UnauthorizedException('Refresh token inválido');
       }
       
-      if (refreshToken !== user.refreshToken) {
+      if (refreshtoken !== user.refreshtoken) {
         console.error('Refresh token não corresponde ao token armazenado');
         throw new UnauthorizedException('Refresh token inválido');
       }
