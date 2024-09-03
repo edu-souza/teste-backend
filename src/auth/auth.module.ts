@@ -4,8 +4,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { jwtConstants } from './constants';
 import { UsuarioModule } from 'src/usuario/usuario.module';
-import { AuthGuard } from './auth.guard';
-import { APP_GUARD } from '@nestjs/core';
 import { HashService } from 'src/usuario/hash.service';
 
 @Module({
@@ -14,7 +12,7 @@ import { HashService } from 'src/usuario/hash.service';
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60m' }, // Define o tempo de expiração para 60 minutos
+      signOptions: { expiresIn: '60m' }, // expiração do access token
     }),
   ],
   providers: [

@@ -34,5 +34,7 @@ import {
     @IsString()
     @IsNotEmpty()
     acesso: string;
+    @IsOptional()
+    refreshToken: string | null;
   }
   

@@ -30,4 +30,7 @@ export class UsuarioEntity {
 
   @OneToMany(() => EventoUsuarioEntity, eventoUsuario => eventoUsuario.usuario)
   eventosUsuarios: EventoUsuarioEntity[];
+
+  @Column({ type: 'text', nullable: true })
+  refreshToken: string | null;
 }
