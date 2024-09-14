@@ -63,7 +63,7 @@ export class AuthService {
         throw new UnauthorizedException('Refresh token inválido');
       }
       
-      if (refreshtoken !== user.refreshToken) {
+      if (refreshtoken !== user.refreshtoken) {
         console.error('Refresh token não corresponde ao token armazenado');
         throw new UnauthorizedException('Refresh token inválido');
       }

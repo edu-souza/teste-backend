@@ -32,7 +32,7 @@ export class UsuarioEntity {
   eventosUsuarios: EventoUsuarioEntity[];
 
   @Column({ type: 'text', nullable: true })
-  refreshToken: string | null;
+  refreshtoken: string | null;
 
   // Adicionando as colunas para o código de redefinição de senha e data de expiração
   @Column({ type: 'text', nullable: true })

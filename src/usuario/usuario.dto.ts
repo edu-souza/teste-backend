@@ -33,7 +33,7 @@ export class UsuarioDto {
 
   @IsString()
   @IsOptional()
-  refreshToken: string | null;
+  refresh_token: string | null;
 
   // Propriedades para recuperação de senha
   @IsString()

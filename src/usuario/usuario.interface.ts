@@ -12,7 +12,7 @@ export interface Usuario {
   imagem: string;
   
   // Propriedades para tokens e recuperação de senha
-  refreshToken?: string | null;
+  refreshtoken?: string | null;
   passwordResetCode?: string | null;
   passwordResetExpiration?: Date | null;
 }
