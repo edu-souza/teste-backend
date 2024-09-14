@@ -1,6 +1,6 @@
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { CidadeEntity } from 'src/cidade/cidade.entity';
-import { EventoEntity } from 'src/evento/evento.entity';
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { EventoUsuarioEntity } from 'src/evento_usuario/evento_usuario.entity';
 
 @Entity({ name: 'usuario' })
 export class UsuarioEntity {
@@ -22,11 +22,14 @@ export class UsuarioEntity {
   @Column({ type: 'text', nullable: true })
   imagem: string;
 
+  @Column({ length: 10 })
+  acesso: string;
+
   @ManyToOne(() => CidadeEntity, cidade => cidade.usuarios)
   cidade: CidadeEntity;
 
-  @ManyToMany(() => EventoEntity, evento => evento.usuarios)
-  eventos: EventoEntity[];
+  @OneToMany(() => EventoUsuarioEntity, eventoUsuario => eventoUsuario.usuario)
+  eventosUsuarios: EventoUsuarioEntity[];
 
   @Column({ type: 'text', nullable: true })
   refreshToken: string | null;
@@ -38,3 +41,4 @@ export class UsuarioEntity {
   @Column({ type: 'timestamptz', nullable: true })
   passwordResetExpiration: Date | null;
 }
+

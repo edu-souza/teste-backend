@@ -11,8 +11,8 @@ import {
   ArrayNotEmpty,
 } from 'class-validator';
 import { ModalidadeEntity } from 'src/modalidade/modalidade.entity';
-import { UsuarioEntity } from 'src/usuario/usuario.entity';
 import { CidadeEntity } from 'src/cidade/cidade.entity';
+import { EventoUsuarioDto } from './evento_usuario.dto';
 
 export class EventoDto {
   @IsUUID()
@@ -97,5 +97,5 @@ export class EventoDto {
   @ArrayNotEmpty()
   @IsUUID("4", { each: true })
   @IsOptional()
-  usuarioIds: UsuarioEntity[];
+  usuarios: EventoUsuarioDto[];
 }

@@ -31,7 +31,7 @@ export class AuthService {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, nome: user.nome, email: user.email, acesso: user.acesso };
     console.log('Payload gerado para os tokens:', payload);
 
     const access_token = await this.jwtService.signAsync(payload, { expiresIn: '10s' });
@@ -48,11 +48,11 @@ export class AuthService {
     };
   }
 
-  async refreshToken(refreshToken: string): Promise<{ access_token: string }> {
-    console.log('Tentando renovar o token:', refreshToken);
+  async refreshtoken(refreshtoken: string): Promise<{ access_token: string }> {
+    console.log('Tentando renovar o token:', refreshtoken);
   
     try {
-      const payload = await this.jwtService.verifyAsync(refreshToken, { secret: jwtConstants.secret });
+      const payload = await this.jwtService.verifyAsync(refreshtoken, { secret: jwtConstants.secret });
       console.log('Payload do token:', payload);
   
       const user = await this.usersService.findById(payload.sub);
@@ -63,7 +63,7 @@ export class AuthService {
         throw new UnauthorizedException('Refresh token inválido');
       }
       
-      if (refreshToken !== user.refreshToken) {
+      if (refreshtoken !== user.refreshToken) {
         console.error('Refresh token não corresponde ao token armazenado');
         throw new UnauthorizedException('Refresh token inválido');
       }

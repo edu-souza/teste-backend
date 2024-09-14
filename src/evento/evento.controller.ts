@@ -8,13 +8,12 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  Query,
-  UseGuards,
+  Query
 } from '@nestjs/common';
 
 import { EventoService } from './evento.service';
 import { EventoDto } from './evento.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { EventoUsuarioEntity } from 'src/evento_usuario/evento_usuario.entity';
 
 @Controller('eventos')
 export class EventoController {
@@ -25,12 +24,38 @@ export class EventoController {
     return this.eventoService.findAll();
   }
 
+  @Get('aprovados')
+  findEventosAprov() {
+    return this.eventoService.findEventosAprov();
+  }
+
+  @Get('pendentes')
+  countPendingEvents() {
+    return this.eventoService.countEventosPend();
+  }
+
+  @Get('meus-eventos')
+  findMeusEventos(@Query('userId') userId: string) {
+    return this.eventoService.findMeusEventos(userId);
+  }
+
+  @Get('solicitacoes-pendentes')
+  findSolicitacoesPendentes(@Query('userId') userId: string) {
+    return this.eventoService.getSolicitacoesPendentes(userId);
+  }
+
   @Get('pagination')
   findPagination(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
   ) {
     return this.eventoService.findPagination(page, limit);
+  }
+
+
+  @Put(':id/usuarios')
+  async updateEventoUsuarios(@Param('id') id: string, @Body() dto: EventoDto) {
+    return this.eventoService.updateEventoUsuarios({ id, ...dto });
   }
 
   @Get(':id')

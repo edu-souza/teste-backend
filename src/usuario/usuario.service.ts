@@ -125,7 +125,7 @@ export class UsuarioService {
     await this.usuarioRepository.update(userId, { refreshToken });
   }
 
-  async removeRefreshToken(userId: string): Promise<void> {
+  async removeRefreshtoken(userId: string): Promise<void> {
     await this.usuarioRepository.update(userId, { refreshToken: null });
   }
 
