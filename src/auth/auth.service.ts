@@ -3,6 +3,8 @@ import { UsuarioService } from 'src/usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { HashService } from 'src/usuario/hash.service';
 import { jwtConstants } from './constants';
+import { MailService } from 'src/email/mailService';
+import { randomInt } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +13,7 @@ export class AuthService {
     private usersService: UsuarioService,
     private jwtService: JwtService,
     private hashService: HashService,
+    private mailService: MailService, 
   ) {}
 
   async signIn(email: string, pass: string): Promise<{ access_token: string, refresh_token: string }> {
@@ -78,4 +81,61 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token inválido');
     }
   }
+
+  async generatePasswordResetCode(email: string): Promise<string> {
+    console.log('Gerando código de redefinição para o e-mail:', email);
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+        throw new UnauthorizedException('Usuário não encontrado');
+    }
+
+    // Gera o código de 6 dígitos
+    const resetCode = randomInt(100000, 999999).toString();
+    console.log('Código gerado:', resetCode);
+
+    const expirationDate = new Date();
+    expirationDate.setMinutes(expirationDate.getMinutes() + 15); // Expira em 15 minutos
+    console.log('Data de expiração:', expirationDate);
+
+    // Salvar o código e data de expiração no banco
+    await this.usersService.savePasswordResetCode(user.id, resetCode, expirationDate);
+
+    // Simulação do envio de e-mail (comente a linha abaixo se não estiver enviando e-mail)
+    /* await this.mailService.sendMail({
+        to: email,
+        subject: 'Código de Redefinição de Senha',
+        text: `Seu código de redefinição de senha é: ${resetCode}. Ele expira em 15 minutos.`,
+    }); */
+
+    return resetCode;
 }
+
+async validatePasswordResetCode(code: string): Promise<boolean> {
+  const user = await this.usersService.findByResetCode(code);
+  if (!user || !user.passwordResetCode) {
+      throw new UnauthorizedException('Código de redefinição inválido');
+  }
+
+  const isCodeValid = code === user.passwordResetCode && new Date() < user.passwordResetExpiration;
+  if (!isCodeValid) {
+      throw new UnauthorizedException('Código de redefinição inválido ou expirado');
+  }
+
+  return true;
+}
+
+
+async resetPassword(code: string, newPassword: string): Promise<void> {
+  const user = await this.usersService.findByResetCode(code);
+    if (!user) {
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
+
+    const hashedPassword = await this.hashService.hashPassword(newPassword);
+    await this.usersService.updatePassword(user.id, hashedPassword);
+
+    // Limpar o código de redefinição após o uso
+    await this.usersService.clearPasswordResetCode(user.id);
+  }
+}
+

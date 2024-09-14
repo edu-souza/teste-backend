@@ -6,6 +6,7 @@ import { UsuarioDto } from './usuario.dto';
 import { Usuario } from './usuario.interface';
 import { Public } from 'src/auth/auth.metadata';
 import { HashService } from './hash.service';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class UsuarioService {
@@ -38,6 +39,24 @@ export class UsuarioService {
     if (!findOne) {
       throw new NotFoundException('Usuário não encontrado com o id ' + id);
     }
+    return findOne;
+  }
+
+  async findByResetCode(resetCode: string): Promise<UsuarioEntity> {
+    const currentDateTime = new Date();
+    
+    const findOne = await this.usuarioRepository.findOne({
+      where: {
+        passwordResetCode: resetCode,
+        passwordResetExpiration: MoreThan(currentDateTime), // Usando MoreThan para verificar se o código não expirou
+      },
+      relations: ['cidade'],
+    });
+    
+    if (!findOne) {
+      throw new NotFoundException('Código de redefinição inválido ou expirado.');
+    }
+    
     return findOne;
   }
 
@@ -109,5 +128,28 @@ export class UsuarioService {
   async removeRefreshToken(userId: string): Promise<void> {
     await this.usuarioRepository.update(userId, { refreshToken: null });
   }
+
+  async updatePassword(userId: string, hashedPassword: string): Promise<void> {
+    const user = await this.usuarioRepository.findOne({ where: { id: userId } });
+    if (user) {
+      user.senha = hashedPassword;
+      await this.usuarioRepository.save(user);
+    }
+  }
   
+  async savePasswordResetCode(userId: string, resetCode: string, expirationDate: Date): Promise<void> {
+    await this.usuarioRepository.update(userId, {
+      passwordResetCode: resetCode,
+      passwordResetExpiration: expirationDate,
+    });
+  }
+
+  async clearPasswordResetCode(userId: string): Promise<void> {
+    await this.usuarioRepository.update(userId, {
+      passwordResetCode: null,
+      passwordResetExpiration: null,
+    });
+  }
+
+
 }

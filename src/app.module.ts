@@ -10,6 +10,8 @@ import { CidadeModule } from './cidade/cidade.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './email/mail.module';
 
 @Module({
   imports: [
@@ -18,7 +20,9 @@ import { AuthGuard } from './auth/auth.guard';
     UsuarioModule,
     EventoModule,
     CidadeModule,
-    AuthModule
+    AuthModule,
+    MailerModule,
+    MailModule
   ],
   controllers: [AppController],
   providers: [{
