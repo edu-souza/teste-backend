@@ -18,15 +18,15 @@ export class MailService {
     });
   }
 
-  async sendMail(mailOptions: { to: string, subject: string, text: string }) {
+  async sendMail(mailOptions: { to: string, subject: string, html: string }) {
 
-    const { to, subject, text } = mailOptions;
+    const { to, subject, html } = mailOptions;
 
     const options = {
       from: '"Contato TriboFit" <contatotribofit@gmail.com', // Seu e-mail
       to: to,
       subject: subject,
-      text: text,
+      html: html,
     };
 
     // Envia o e-mail
