@@ -3,7 +3,7 @@ import { UsuarioService } from 'src/usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { HashService } from 'src/usuario/hash.service';
 import { jwtConstants } from './constants';
-import { MailService } from 'src/email/mailService';
+import { MailService } from 'src/email/mail.service';
 import { randomInt } from 'crypto';
 
 @Injectable()
@@ -101,11 +101,11 @@ export class AuthService {
     await this.usersService.savePasswordResetCode(user.id, resetCode, expirationDate);
 
     // Simulação do envio de e-mail (comente a linha abaixo se não estiver enviando e-mail)
-    /* await this.mailService.sendMail({
+    await this.mailService.sendMail({
         to: email,
         subject: 'Código de Redefinição de Senha',
         text: `Seu código de redefinição de senha é: ${resetCode}. Ele expira em 15 minutos.`,
-    }); */
+    }); 
 
     return resetCode;
 }
