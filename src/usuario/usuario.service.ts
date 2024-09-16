@@ -3,10 +3,11 @@ import { Repository } from 'typeorm';
 import { UsuarioEntity } from './usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsuarioDto } from './usuario.dto';
-import { Usuario } from './usuario.interface';
 import { Public } from 'src/auth/auth.metadata';
 import { HashService } from './hash.service';
+import { UploadService } from 'src/core/upload.service';
 import { MoreThan } from 'typeorm';
+
 
 @Injectable()
 export class UsuarioService {
@@ -14,6 +15,7 @@ export class UsuarioService {
     @InjectRepository(UsuarioEntity)
     private usuarioRepository: Repository<UsuarioEntity>,
     private hashService: HashService,
+    private uploadService: UploadService,
   ) { }
 
   findAll() {
@@ -67,26 +69,50 @@ export class UsuarioService {
   }
 
   @Public()
-  async create(dto: UsuarioDto) {
+  async create(dto: UsuarioDto, file: Express.Multer.File) {
+    console.log(`Dados dto: `,dto)
+    console.log('Imagem: ',file)
     await this.validaUsuario(dto);
 
     // Criptografando a senha antes de salvar
     dto.senha = await this.hashService.hashPassword(dto.senha);
 
+    if (file) {
+      const imageUrl = await this.uploadService.uploadLocal(file); // para armazenamento local
+      dto.imagem = imageUrl; // adiciona apenas o nome do arquivo no banco de dados
+    }
+
     const newUsuario = this.usuarioRepository.create(dto);
     return this.usuarioRepository.save(newUsuario);
   }
 
-  async update(dto: UsuarioDto) {
-    await this.findById(dto.id);
-    await this.validaUsuario(dto)
-
+  async update(dto: UsuarioDto, file?: Express.Multer.File) {
+    const usuarioEditado = await this.findById(dto.id);
+    
+    // Verifica se a imagem foi alterada
+    const imagemAntiga = usuarioEditado.imagem;
+    const imagemNova = file ? await this.uploadService.uploadLocal(file) : undefined;
+  
+    await this.validaUsuario(dto);
+  
     // Se a senha foi atualizada, estamos criptografando antes de salvar
     if (dto.senha) {
       dto.senha = await this.hashService.hashPassword(dto.senha);
     }
-
-    return this.usuarioRepository.save(dto);
+  
+    // Se houver uma imagem antiga e uma nova imagem foi enviada, eu excluo a antiga
+    if (imagemAntiga && imagemNova) {
+      await this.uploadService.deleteFile(imagemAntiga);
+    }
+  
+    // Atualiza a imagem, se fornecida
+    if (file) {
+      dto.imagem = imagemNova;
+    } else if (imagemAntiga) {
+      dto.imagem = imagemAntiga;
+    }
+  
+    return this.usuarioRepository.save({ ...usuarioEditado, ...dto });
   }
 
   private async validaUsuario(usuario: UsuarioEntity | UsuarioDto) {

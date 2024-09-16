@@ -98,9 +98,14 @@
           throw new UnauthorizedException('Usuário não encontrado');
       }
 
+
+    const access_token = await this.jwtService.signAsync(payload, { expiresIn: '20m' });
+    const refresh_token = await this.jwtService.signAsync(payload, { expiresIn: '20m' });
+
       // Gera o código de 6 dígitos
       const resetCode = randomInt(100000, 999999).toString();
       console.log('Código gerado:', resetCode);
+
 
       const expirationDate = new Date();
       expirationDate.setMinutes(expirationDate.getMinutes() + 15); // Expira em 15 minutos

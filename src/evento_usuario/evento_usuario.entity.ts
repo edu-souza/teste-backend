@@ -13,6 +13,6 @@ export class EventoUsuarioEntity {
   @ManyToOne(() => UsuarioEntity, usuario => usuario.eventosUsuarios, { eager: true })
   usuario: UsuarioEntity;
 
-  @Column({ length: 1 })
+  @Column({ name: 'status_participante', length: 1 })
   statusParticipante: string;
 }

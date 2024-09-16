@@ -9,7 +9,7 @@ export class ModalidadeEntity {
   @Column({ length: 100 })
   nome: string;
 
-  @Column({ type: 'text', name: 'icone', nullable: true })
+  @Column({ length: 40, name: 'icone', nullable: true })
   icone: String;
 
   @OneToMany(() => EventoEntity, evento => evento.modalidade)

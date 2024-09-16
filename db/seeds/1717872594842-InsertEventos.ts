@@ -5,7 +5,7 @@ export class InsertEventos1717872594842 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
             "INSERT INTO evento " +
-            '(id, titulo, descricao, tipo, data, hora, "diaSemana", "quantidadeParticipantes", bairro, rua, numero, complemento, status, "cidadeId", "modalidadeId",latitude,longitude,admin,status_aprov) ' +
+            '(id, titulo, descricao, tipo, data, hora, "dia_semana", "quantidade_participantes", bairro, rua, numero, complemento, status, "cidadeId", "modalidadeId",latitude,longitude,admin,status_aprovacao) ' +
 
             "VALUES " +
 
