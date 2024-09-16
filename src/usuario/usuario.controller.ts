@@ -7,16 +7,18 @@ import {
   Param,
   Post,
   Put,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-
 import { diskStorage } from 'multer';
 import { UsuarioService } from './usuario.service';
 import { UsuarioDto } from './usuario.dto';
 import { Public } from 'src/auth/auth.metadata';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
+import { Response } from 'express';
+import { promises as fs } from 'fs';
 
 @Controller('usuarios')
 export class UsuarioController {
@@ -38,11 +40,11 @@ export class UsuarioController {
   }
 
   @Public()
-  @Post('upload')
+  @Post()
   @UseInterceptors(
-    FileInterceptor('foto', {
+    FileInterceptor('imagem', {
       storage: diskStorage({
-        destination: './uploads',
+        destination: './uploads', // Define o local de armazenamento da imagem
         filename: (req, file, callback) => {
           const filename = `${Date.now()}${extname(file.originalname)}`;
           callback(null, filename);
@@ -50,26 +52,37 @@ export class UsuarioController {
       }),
     }),
   )
-  uploadFile(@UploadedFile() foto: Express.Multer.File) {
-    if (!foto) {
-      throw new BadRequestException('Arquivo não enviado');
-    }
-    return { filename: foto.filename };
-  }
-
-  @Public()
-  @Post()
-  async create(@Body() body: UsuarioDto) {
-    // Adiciona a imagem se estiver presente
-    if (body.imagem) {
-      body.imagem = `${body.imagem}`;
-    }
-
-    return this.usuarioService.create(body);
+  
+  async create(
+    @Body() body: UsuarioDto, 
+    @UploadedFile() imagem: Express.Multer.File
+  ) {
+    // Chamar o serviço passando ambos os argumentos
+    return this.usuarioService.create(body, imagem);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UsuarioDto) {
-    return this.usuarioService.update({ id, ...dto });
+  @UseInterceptors(
+    FileInterceptor('imagem', {
+      storage: diskStorage({
+        destination: './uploads', // Define o local de armazenamento da imagem
+        filename: (req, file, callback) => {
+          const filename = `${Date.now()}${extname(file.originalname)}`;
+          callback(null, filename);
+        },
+      }),
+    }),
+  )
+  async update(
+    @Param('id') id: string, 
+    @Body() dto: UsuarioDto, 
+    @UploadedFile() imagem?: Express.Multer.File
+  ) {
+    return this.usuarioService.update({ id, ...dto }, imagem);
   }
+
+  @Get('imagem/:filename')
+  getImagem(@Param('filename') filename: string, @Res() res: Response){
+    return res.sendFile(filename, {root: './uploads'});
+  } 
 }

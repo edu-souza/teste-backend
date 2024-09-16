@@ -31,8 +31,8 @@ export class AuthService {
     const payload = { sub: user.id, nome: user.nome, email: user.email, acesso: user.acesso };
     console.log('Payload gerado para os tokens:', payload);
 
-    const access_token = await this.jwtService.signAsync(payload, { expiresIn: '10s' });
-    const refresh_token = await this.jwtService.signAsync(payload, { expiresIn: '30s' });
+    const access_token = await this.jwtService.signAsync(payload, { expiresIn: '20m' });
+    const refresh_token = await this.jwtService.signAsync(payload, { expiresIn: '20m' });
 
     console.log('Tokens gerados:', { access_token, refresh_token });
 
@@ -65,7 +65,7 @@ export class AuthService {
         throw new UnauthorizedException('Refresh token inválido');
       }
   
-      const access_token = await this.jwtService.signAsync({ sub: payload.sub, email: payload.email }, { expiresIn: '10s' });
+      const access_token = await this.jwtService.signAsync({ sub: payload.sub, email: payload.email }, { expiresIn: '20m' });
       console.log('Novo access token gerado:', access_token);
   
       return { access_token };

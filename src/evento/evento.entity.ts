@@ -23,10 +23,10 @@ export class EventoEntity {
   @Column({ type: 'time', nullable: true })
   hora: Date;
 
-  @Column({ nullable: true })
+  @Column({ name: 'dia_semana', nullable: true })
   diaSemana: string;
 
-  @Column({ type: 'integer' })
+  @Column({ name: 'quantidade_participantes', type: 'integer' })
   quantidadeParticipantes: number;
 
   @Column({ nullable: true })
@@ -56,7 +56,7 @@ export class EventoEntity {
   @Column({})
   status: string;
 
-  @Column({})
+  @Column({name: 'status_aprovacao'})
   status_aprov: string;
 
   @ManyToOne(() => CidadeEntity, cidade => cidade.eventos)

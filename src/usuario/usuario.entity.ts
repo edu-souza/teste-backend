@@ -19,7 +19,7 @@ export class UsuarioEntity {
   @Column({ length: 255 })
   senha: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ length: 100, nullable: true })
   imagem: string;
 
   @Column({ length: 10 })

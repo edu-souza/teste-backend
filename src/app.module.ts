@@ -8,8 +8,10 @@ import { UsuarioModule } from './usuario/usuario.module';
 import { EventoModule } from './evento/evento.module';
 import { CidadeModule } from './cidade/cidade.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -18,7 +20,10 @@ import { AuthGuard } from './auth/auth.guard';
     UsuarioModule,
     EventoModule,
     CidadeModule,
-    AuthModule
+    AuthModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads')
+    })
   ],
   controllers: [AppController],
   providers: [{
