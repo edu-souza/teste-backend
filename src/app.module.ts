@@ -12,6 +12,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './email/mail.module';
+
 
 @Module({
   imports: [
@@ -23,7 +26,9 @@ import { join } from 'path';
     AuthModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads')
-    })
+    }),
+    MailerModule,
+    MailModule
   ],
   controllers: [AppController],
   providers: [{
