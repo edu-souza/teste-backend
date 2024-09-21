@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class MailService {
@@ -18,12 +20,15 @@ export class MailService {
     });
   }
 
-  async sendMail(mailOptions: { to: string, subject: string, html: string }) {
+  private getTemplatePath(filename: string): string {
+    return path.join(process.cwd(), 'src', 'email', 'templates', filename);
+  }
 
+  async sendMail(mailOptions: { to: string, subject: string, html: string }) {
     const { to, subject, html } = mailOptions;
 
     const options = {
-      from: '"Contato TriboFit" <contatotribofit@gmail.com', // Seu e-mail
+      from: '"Contato TriboFit" <contatotribofit@gmail.com>', // Seu e-mail
       to: to,
       subject: subject,
       html: html,
@@ -32,4 +37,75 @@ export class MailService {
     // Envia o e-mail
     await this.transporter.sendMail(options);
   }
+
+  async sendPasswordResetCodeMail(email: string, resetCode: string, nome: string) {
+    const templatePath = this.getTemplatePath('reset-password-template.html');
+    let html = fs.readFileSync(templatePath, 'utf8');
+
+    html = html.replace('{{resetCode}}', resetCode);
+    html = html.replace('{{nome}}', nome);
+
+    await this.sendMail({
+      to: email,
+      subject: 'Código de Redefinição de Senha',
+      html: html,
+    });
+  }
+
+  async sendPasswordChangedMail(email: string, nome: string) {
+    const templatePath = this.getTemplatePath('alteracao-senha.html');
+    let html = fs.readFileSync(templatePath, 'utf8');
+
+    html = html.replace('{{nomeUsuario}}', nome);
+
+    await this.sendMail({
+      to: email,
+      subject: 'Você alterou sua senha',
+      html: html,
+    });
+  }
+
+  async sendSolicitacaoParticipacao(email: string, nomeAdmin: string, nomeSolicitante: string, nomeEvento: string) {
+    const templatePath = this.getTemplatePath('solicitacao-participacao.html');
+    let html = fs.readFileSync(templatePath, 'utf8');
+
+    html = html.replace('{{nomeSolicitante}}', nomeSolicitante);
+    html = html.replace('{{nomeAdmin}}', nomeAdmin);
+    html = html.replace('{{nomeEvento}}', nomeEvento )
+
+    await this.sendMail({
+      to: email,
+      subject: 'Um usuário solicitou participação em seu evento',
+      html: html,
+    });
+  }
+
+  async sendAvisoEventoAprovado(email: string, nomeAdmin: string, nomeEvento: string) {
+    const templatePath = this.getTemplatePath('evento-aprovado.html');
+    let html = fs.readFileSync(templatePath, 'utf8');
+
+    html = html.replace('{{nomeUsuario}}', nomeAdmin);
+    html = html.replace('{{nomeEvento}}', nomeEvento )
+
+    await this.sendMail({
+      to: email,
+      subject: 'Seu evento foi aprovado',
+      html: html,
+    });
+  }
+
+  async sendAvisoEventoReprovado(email: string, nomeAdmin: string, nomeEvento: string) {
+    const templatePath = this.getTemplatePath('evento-reprovado.html');
+    let html = fs.readFileSync(templatePath, 'utf8');
+
+    html = html.replace('{{nomeUsuario}}', nomeAdmin);
+    html = html.replace('{{nomeEvento}}', nomeEvento )
+
+    await this.sendMail({
+      to: email,
+      subject: 'Seu evento foi reprovado',
+      html: html,
+    });
+  }
+
 }
