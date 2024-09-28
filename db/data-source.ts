@@ -1,13 +1,14 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: './.env' });
 
 export const dataSourceOptions: DataSourceOptions = {
-    type: 'postgres',
-    database: 'tribofit',
-    username: 'admin',
-    password: '8UEMcJ6SN6S0S36W4VzLkDWvYMTM9qPx',
-    port: 5432,
-    entities: ['dist/**/*.entity.js'],
-    migrations: ['dist/db/migrations/*.js'],
-}
+  type: 'postgres',
+  url: process.env.DB_URL,
+  entities: ['dist/**/*.entity.js'],
+  migrations: ['dist/db/migrations/*.js'],
+  synchronize: false,
+};
 
-export default new DataSource(dataSourceOptions);
+export const AppDataSource = new DataSource(dataSourceOptions);

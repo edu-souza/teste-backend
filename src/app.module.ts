@@ -1,8 +1,10 @@
+// src/app.module.ts
+
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourceOptions } from 'db/data-source';
 import { ModalidadeModule } from './modalidade/modalidade.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { EventoModule } from './evento/evento.module';
@@ -15,26 +17,41 @@ import { join } from 'path';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './email/mail.module';
 
-
 @Module({
   imports: [
-    TypeOrmModule.forRoot(dataSourceOptions),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+        url: configService.get<string>('DB_URL'),
+        entities: ['dist/**/*.entity.js'],
+        migrations: ['dist/db/migrations/*.js'],
+        synchronize: false,
+      }),
+      inject: [ConfigService],
+    }),
     ModalidadeModule,
     UsuarioModule,
     EventoModule,
     CidadeModule,
     AuthModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads')
+      rootPath: join(__dirname, '..', 'uploads'),
     }),
     MailerModule,
-    MailModule
+    MailModule,
   ],
   controllers: [AppController],
-  providers: [{
-    provide: APP_GUARD,
-    useClass: AuthGuard
-  },
-  AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    AppService,
+  ],
 })
-export class AppModule { }
+export class AppModule {}
